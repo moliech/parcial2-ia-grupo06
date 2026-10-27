@@ -86,7 +86,7 @@ def tarea4_visualizaciones_seaborn(df: pd.DataFrame, dir_salida: str = "data") -
     print("=" * 70)
 
     sns.set_theme(style="whitegrid")
-    palette = {0: "#10b981", 1: "#ef4444"}
+    palette = ["#10b981", "#ef4444"]
 
     # Grafico 1: Dispersion
     plt.figure(figsize=(9, 6))
@@ -104,7 +104,10 @@ def tarea4_visualizaciones_seaborn(df: pd.DataFrame, dir_salida: str = "data") -
 
     # Grafico 2: Boxplot
     plt.figure(figsize=(8, 5))
-    sns.boxplot(data=df, x="consumo_excesivo", y="consumo_m3_mes", palette=palette)
+    sns.boxplot(
+        data=df, x="consumo_excesivo", y="consumo_m3_mes",
+        hue="consumo_excesivo", palette=palette, legend=False
+    )
     plt.title("Comparación de Consumo (m³/mes) según Clasificación de Exceso", fontsize=13, fontweight="bold")
     plt.xlabel("Clasificación (0: Normal, 1: Excesivo)", fontsize=11)
     plt.ylabel("Consumo Mensual (m³/mes)", fontsize=11)

@@ -10,7 +10,7 @@
 
 ---
 
-## 1. Reproducción del Entorno (Docker) — Tarea 1 (0.5 pts)
+## 1. Reproducción del Entorno (Docker)
 
 El entorno de desarrollo está dockerizado bajo **Python 3.12** para facilitar su reproducción y mantener aisladas las dependencias del proyecto (`numpy`, `pandas`, `matplotlib` y `seaborn`).
 
@@ -29,9 +29,9 @@ docker exec -it parcial2_ia python src/parcial2.py
 
 ---
 
-## 2. Carga e Inspección de Datos (Tarea 2 - 0.4 pts)
+## 2. Carga e Inspección de Datos
 
-Al ejecutar la carga del archivo `data/grupo_06.csv` mediante Pandas en `src/parcial2.py`, se registraron en consola todas las salidas exigidas por la rúbrica:
+Al ejecutar la carga del archivo `data/grupo_06.csv` mediante Pandas en `src/parcial2.py`, se registraron en consola las siguientes salidas de inspección:
 
 ### Primeras 5 filas del archivo original (`head()`):
 ```text
@@ -69,14 +69,14 @@ dtype: int64
 ### Cantidad de filas duplicadas (`duplicated().sum()`):
 - `0` filas duplicadas.
 
-### Respuesta a la Pregunta Clave (Tarea 2)
+### Respuesta a la Pregunta Clave
 > **¿Alguna columna numérica aparece con un tipo de dato que no debería tener? ¿Por qué ocurre?**
 
 Sí. La columna objetivo `consumo_excesivo` aparece tipada como `float64` en lugar de `int64`. Esto ocurre porque en la última fila del archivo original venía un registro de resumen con etiqueta `hogar_id = "TOTAL"`, el cual contenía un valor nulo (`NaN`) en la columna objetivo. En Pandas, la presencia de valores `np.nan` en una columna numérica obliga a promocionar su tipo a punto flotante (`float64`) para poder representar la ausencia de datos.
 
 ---
 
-## 3. Calidad y Limpieza de Datos con Pandas (Tarea 3 - 1.2 pts)
+## 3. Calidad y Limpieza de Datos con Pandas
 
 Se identificaron y corrigieron cuatro problemas de calidad en los datos, aplicando un orden metódico para evitar que las distorsiones afectaran los cálculos de imputación:
 
@@ -87,7 +87,7 @@ Se identificaron y corrigieron cuatro problemas de calidad en los datos, aplican
 | 3 | **Valores faltantes (NaN)** | 3 registros (`A028`, `A050`, `A052`) con campos ausentes en `consumo_m3_mes`. | **Imputar con la mediana (30.50 m³)** | La mediana se calculó tras excluir la fila `TOTAL` y corregir el valor atípico de 7800 m³, evitando el sesgo de la media y conservando los 80 registros completos. |
 | 4 | **Inconsistencias en barrios** | Presencia de 11 variantes ortográficas en la columna categórica (`ortez`, `ORTEZ`, `Santa Ana `, ` San Jerónimo`). | **Estandarizar (`.str.strip().str.title()`)** | Se eliminaron espacios en blanco y se aplicó formato de título, consolidando 5 barrios canónicos: El Prado, La Isleta, Ortez, San Jerónimo y Santa Ana. |
 
-### Respuesta a la Pregunta Clave (Tarea 3)
+### Respuesta a la Pregunta Clave
 > **¿Qué valor le pareció más sospechoso? Calcular la media de esa columna antes y después de corregirlo y explicar cómo habría afectado el escalado del perceptrón si no se hubiera corregido.**
 
 El valor más sospechoso fue el consumo de **7800.0 m³** registrado para el hogar `A016`. Se consideró un posible error de unidades y se corrigió a **7.8 m³**, equivalente a 7800 litros.
@@ -107,26 +107,30 @@ Si el valor atípico se hubiera conservado, la desviación estándar habría sid
 
 ---
 
-## 4. Visualización con Seaborn (Tarea 4 - 0.6 pts)
+## 4. Visualización de Datos con Seaborn
 
-Se generaron dos gráficos estadísticos guardados mediante `plt.savefig()` con títulos, ejes rotulados y unidades claramente especificadas:
+Se generaron dos gráficos estadísticos para analizar las variables numéricas y su relación con la etiqueta de consumo:
 
-1. **`data/dispersion.png` (Gráfico 1: Dispersión $x_1$ vs $x_2$ coloreada por $y$):**
-   - **Configuración:** Generado con `sns.scatterplot()`. Eje X: Consumo de agua (m³/mes); Eje Y: Personas en el hogar (número de habitantes); Matiz (`hue`): Clasificación de consumo excesivo (0: Normal en verde, 1: Excesivo en rojo).
-   - **Qué muestra y conclusión:** Se observa una tendencia donde los hogares con menor número de habitantes (1 a 3 personas) y consumos superiores a los 25 m³ son clasificados en su mayoría como consumo excesivo, mientras que en hogares más numerosos (5 a 8 personas) se registran consumos moderados sin alcanzar dicha clasificación. Esto sugiere la existencia de una frontera de separación aproximada entre ambas variables.
+### Gráfico 1: Dispersión de Variables Numéricas
+![Dispersión: Consumo Mensual vs Habitantes](data/dispersion.png)
 
-2. **`data/comparacion.png` (Gráfico 2: Diagrama de Cajas de Consumo según Clasificación):**
-   - **Configuración:** Generado con `sns.boxplot()`. Eje X: Clasificación de exceso (0: Normal, 1: Excesivo); Eje Y: Consumo mensual (m³/mes).
-   - **Qué muestra y conclusión:** La mediana del consumo mensual para la clase normal se ubica en **18.8 m³** (con rango intercuartílico entre 10.7 y 25.6 m³), mientras que para la clase de consumo excesivo la mediana asciende a **47.9 m³** (con rango intercuartílico entre 37.5 y 56.2 m³). La diferencia entre las medianas muestra que los hogares clasificados con consumo excesivo presentan, en general, consumos mensuales más elevados; sin embargo, existe un área de solapamiento en consumos intermedios (25–35 m³) donde el número de habitantes resulta determinante para definir la clasificación.
+- **Configuración:** Generado con `sns.scatterplot()`. Eje X: Consumo de agua (m³/mes); Eje Y: Personas en el hogar (número de habitantes); Matiz (`hue`): Clasificación de consumo excesivo (0: Normal en verde, 1: Excesivo en rojo).
+- **Qué muestra y conclusión:** Se observa una tendencia donde los hogares con menor número de habitantes (1 a 3 personas) y consumos superiores a los 25 m³ son clasificados en su mayoría como consumo excesivo, mientras que en hogares más numerosos (5 a 8 personas) se registran consumos moderados sin alcanzar dicha clasificación. Esto sugiere la existencia de una frontera de separación aproximada entre ambas variables.
+
+### Gráfico 2: Comparación de Consumo según Clasificación
+![Diagrama de Cajas: Consumo según Clasificación](data/comparacion.png)
+
+- **Configuración:** Generado con `sns.boxplot()`. Eje X: Clasificación de exceso (0: Normal, 1: Excesivo); Eje Y: Consumo mensual (m³/mes).
+- **Qué muestra y conclusión:** La mediana del consumo mensual para la clase normal se ubica en **18.8 m³** (con rango intercuartílico entre 10.7 y 25.6 m³), mientras que para la clase de consumo excesivo la mediana asciende a **47.9 m³** (con rango intercuartílico entre 37.5 y 56.2 m³). La diferencia entre las medianas muestra que los hogares clasificados con consumo excesivo presentan, en general, consumos mensuales más elevados; sin embargo, existe un área de solapamiento en consumos intermedios (25–35 m³) donde el número de habitantes resulta determinante para definir la clasificación.
 
 ---
 
-## 5. Perceptrón desde Cero con NumPy (Tarea 5 - 1.3 pts)
+## 5. Implementación del Perceptrón con NumPy
 
 ### Arquitectura de Código y Modularidad
-El proyecto sigue una arquitectura desacoplada para el trabajo colaborativo:
-- **`src/parcial2.py` (Script principal orquestador):** Archivo exigido por la rúbrica que ejecuta de forma secuencial la carga de datos, la limpieza con Pandas, la generación de figuras con Seaborn y la llamada al modelo.
-- **`src/perceptron.py` (Módulo del modelo):** Desarrollado desde cero en la rama `heiber` exclusivamente con NumPy, conteniendo las clases `Estandarizador` y `PerceptronSigmoide`.
+El proyecto sigue una estructura modular para el flujo de trabajo:
+- **`src/parcial2.py` (Script principal orquestador):** Ejecuta de forma secuencial la carga de datos, la limpieza con Pandas, la generación de figuras con Seaborn y el entrenamiento del modelo.
+- **`src/perceptron.py` (Módulo del modelo):** Contiene la lógica del perceptrón y el escalador de datos mediante las clases `PerceptronSigmoide` y `Estandarizador`, implementadas con operaciones vectorizadas de NumPy.
 
 ### Componentes Matemáticos Implementados:
 - **Estandarización de características:** Ajusta cada columna para tener **media 0 y desviación estándar 1**, almacenando la media ($\mu$) y la desviación ($\sigma$) para transformar nuevos datos:
@@ -135,7 +139,7 @@ El proyecto sigue una arquitectura desacoplada para el trabajo colaborativo:
   $$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 - **Pérdida Logarítmica (Binary Cross-Entropy):** Evalúa el error entre las probabilidades predichas y las etiquetas reales, empleando un factor de seguridad $\epsilon = 10^{-15}$:
   $$L = -\frac{1}{N} \sum_{i=1}^{N} \left[ y_i \ln(p_i + \epsilon) + (1 - y_i) \ln(1 - p_i + \epsilon) \right]$$
-- **Descenso del Gradiente:** Entrenado durante 500 épocas (superando las 300 exigidas) con tasa de aprendizaje $\alpha = 0.1$, registrando la pérdida y exactitud en cada época:
+- **Descenso del Gradiente:** Entrenado durante 500 épocas con tasa de aprendizaje $\alpha = 0.1$, registrando la pérdida y exactitud en cada época:
   $$\nabla_w L = \frac{1}{N} X^T (p - y), \quad \nabla_b L = \frac{1}{N} \sum (p - y)$$
   $$w := w - \alpha \nabla_w L, \quad b := b - \alpha \nabla_b L$$
 
@@ -143,17 +147,23 @@ El proyecto sigue una arquitectura desacoplada para el trabajo colaborativo:
 - **Pesos iniciales:** $w_1 = +0.0050$, $w_2 = -0.0014$, $b = 0.0000$
 - **Pesos finales:** $w_1 = +2.6583$, $w_2 = -1.9871$, $b = +0.5466$
 - **Pérdida inicial (BCE):** $0.6913$
-- **Pérdida final (BCE):** $0.2372$
+- **Pérdida final (BCE):** $0.2371$
 - **Exactitud final (Accuracy):** **$90.00\%$**
 
-### Gráficos Generados:
-- **`data/curva_aprendizaje.png`:** Muestra la evolución descendente y convergente de la pérdida logarítmica a través de las 500 épocas de entrenamiento.
-- **`data/frontera_decision.png`:** Muestra los puntos de las dos clases y la recta de decisión ($P=0.5$) proyectada en las **unidades originales** de metros cúbicos y habitantes por hogar, mediante la des-estandarización analítica:
-  $$x_{2\text{ (personas)}} = \sigma_2 \cdot \left[ -\frac{w_1}{w_2} \left(\frac{x_{1\text{ (m3)}} - \mu_1}{\sigma_1}\right) - \frac{b}{w_2} \right] + \mu_2$$
+### Gráficos de Aprendizaje y Frontera de Decisión
+
+#### Curva de Aprendizaje
+![Curva de Aprendizaje](data/curva_aprendizaje.png)
+*Evolución descendente y convergente de la pérdida logarítmica a través de las 500 épocas de entrenamiento.*
+
+#### Frontera de Decisión en Unidades Originales
+![Frontera de Decisión](data/frontera_decision.png)
+*Puntos de las dos clases y recta de decisión ($P=0.5$) proyectada en las unidades originales de metros cúbicos y habitantes por hogar, calculada mediante la transformación analítica:*
+$$x_{2\text{ (personas)}} = \sigma_2 \cdot \left[ -\frac{w_1}{w_2} \left(\frac{x_{1\text{ (m3)}} - \mu_1}{\sigma_1}\right) - \frac{b}{w_2} \right] + \mu_2$$
 
 ---
 
-## 6. Interpretación de Resultados (Tarea 6 - 0.7 pts)
+## 6. Interpretación de Resultados
 
 ### 1. ¿Qué significa el signo de w1 y de w2 en el contexto del problema? ¿Tiene sentido para Cartago?
 - **Signo de $w_1$ (+2.6583):** Es positivo. Indica que a mayor consumo mensual de agua, aumenta la probabilidad estimada de que el hogar sea clasificado en la categoría de consumo excesivo, manteniendo constante el número de habitantes.
@@ -176,8 +186,8 @@ Se evaluaron dos casos hipotéticos empleando la media y la desviación estánda
 ### 4. Recomendación concreta a la entidad local de Cartago
 A partir de los resultados cuantitativos obtenidos en el análisis, se proponen dos recomendaciones técnicas como apoyo para la gestión operativa:
 
-1. **Priorización de revisiones según el promedio general:** Tomando como referencia la media depurada de **$32.24\text{ m}^3$** y el peso negativo asociado a las personas ($w_2 = -1.9871$), se recomienda priorizar visitas técnicas a hogares pequeños (1 a 2 habitantes) cuyos consumos superen dicho promedio, ya que para estos perfiles el modelo estima probabilidades de exceso superiores al $85\%$.
-2. **Monitoreo en la zona de solapamiento a partir de la mediana de exceso:** Considerando que la mediana del consumo excesivo identificada en el análisis exploratorio (Tarea 4) fue de **$47.9\text{ m}^3$**, se plantea utilizar este valor como umbral de referencia para auditar hogares medianos (3 a 5 integrantes) que se ubiquen en esta franja de consumo.
+1. **Priorización de revisiones según el promedio general:** Tomando como referencia la media depurada de **$32.24\text{ m}^3$** y el peso negativo asociado a las personas ($w_2 = -1.9871$), se sugiere priorizar visitas técnicas a hogares pequeños (1 a 2 habitantes) cuyos consumos superen dicho promedio, ya que para estos perfiles el modelo estima probabilidades de exceso superiores al $85\%$.
+2. **Monitoreo en la zona de solapamiento a partir de la mediana de exceso:** Considerando que la mediana del consumo excesivo identificada en el análisis exploratorio fue de **$47.9\text{ m}^3$**, se plantea utilizar este valor como umbral de referencia para auditar hogares medianos (3 a 5 integrantes) que se ubiquen en esta franja de consumo.
 
 *Nota de alcance:* Estas propuestas constituyen un criterio inicial de tamizaje estadístico y deben ser validadas con datos de nuevos períodos antes de ser utilizadas para decisiones sancionatorias o tarifarias definitivas.
 
@@ -188,9 +198,9 @@ A partir de los resultados cuantitativos obtenidos en el análisis, se proponen 
 
 ---
 
-## 7. Repositorio y Documentación (Tarea 7 - 0.3 pts)
+## 7. Estructura del Repositorio
 
-El repositorio incluye la totalidad de los archivos exigidos para la evaluación:
+El repositorio incluye los siguientes archivos organizados para su ejecución:
 - `Dockerfile`
 - `docker-compose.yml`
 - `requirements.txt`
@@ -198,10 +208,8 @@ El repositorio incluye la totalidad de los archivos exigidos para la evaluación
 - `src/perceptron.py` (Módulo del modelo)
 - `data/grupo_06.csv` (CSV original asignado)
 - `data/grupo_06_limpio.csv` (CSV depurado tras la limpieza)
-- `data/dispersion.png` (Gráfico 1 Seaborn)
-- `data/comparacion.png` (Gráfico 2 Seaborn)
+- `data/dispersion.png` (Gráfico de dispersión Seaborn)
+- `data/comparacion.png` (Diagrama de cajas Seaborn)
 - `data/curva_aprendizaje.png` (Pérdida por época)
 - `data/frontera_decision.png` (Frontera en unidades originales)
-- `README.md` (Documentación completa con todas las respuestas)
-
-Se registraron al menos tres commits a lo largo del desarrollo para evidenciar el proceso evolutivo del proyecto.
+- `README.md` (Documentación del proyecto)

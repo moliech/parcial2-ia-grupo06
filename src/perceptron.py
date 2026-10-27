@@ -1,8 +1,3 @@
-"""Modulo de Perceptron binario con funcion de activacion sigmoide y descenso
-del gradiente implementado exclusivamente con NumPy desde cero.
-Diseñado para la clasificacion de consumo excesivo de agua potable en Cartago.
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 
